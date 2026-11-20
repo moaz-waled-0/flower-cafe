@@ -106,30 +106,6 @@
     </div>
 
     <!-- =====================================================================
-         شريط محاكاة مسح QR الطاولات (للاختبار السريع من 1 إلى 12)
-         ===================================================================== -->
-    <div class="w-full bg-white/80 backdrop-blur-md border-b border-[#c59b5f]/25 px-3 py-2 sticky top-0 z-30">
-        <div class="max-w-[480px] mx-auto flex items-center justify-between gap-2 text-[11px]">
-            <span class="font-bold text-[#9e743b] whitespace-nowrap">📱 محاكاة QR الطاولة:</span>
-            <div class="flex items-center gap-1.5">
-                <select id="qrSimulatorSelect" onchange="simulateTableScan(this.value)"
-                    class="bg-[#fff5f8] border border-[#c59b5f]/50 rounded-lg px-2 py-1 font-bold text-[#4e2f1d] focus:outline-none">
-                    <option value="1">طاولة 1</option>
-                    <option value="2">طاولة 2</option>
-                    <option value="3" selected>طاولة 3</option>
-                    <option value="4">طاولة 4</option>
-                    <option value="5">طاولة 5</option>
-                    <option value="bar">البار (Bar)</option>
-                </select>
-                <button type="button" onclick="simulateTableScan(document.getElementById('qrSimulatorSelect').value)"
-                    class="px-2.5 py-1 rounded-lg bg-[#c59b5f] text-white font-bold active:scale-95 transition-transform whitespace-nowrap">
-                    مسح جديد
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- =====================================================================
          الهيدر الرئيسي: لوجو Flower Café + رقم الطاولة أو البار + مؤقت الجلسة (10 دقائق)
          ===================================================================== -->
     <header class="w-full max-w-[460px] mx-auto px-4 pt-4 pb-2 text-center">
@@ -166,43 +142,44 @@
                 </div>
             </div>
 
-            <!-- شارة رقم الطاولة أو البار + مؤقت الجلسة الآمن -->
+            <!-- شارة رقم الطاولة أو البار المقفل + مؤقت الجلسة الآمن -->
             <div class="text-left shrink-0">
                 <div id="headerLocationBadge" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-[#d4af37] to-[#b88a44] text-white text-xs font-extrabold shadow-sm">
-                    <span>طاولة</span>
-                    <span id="headerTableNum">3</span>
+                    <span>🔒</span>
+                    <span id="headerTableNum">يرجى مسح QR</span>
                 </div>
                 <div class="mt-1 flex items-center justify-end gap-1 text-[10px] font-bold text-[#7c533b]">
                     <span>⏳</span>
-                    <span id="sessionTimerDisplay" class="font-mono">10:00</span>
+                    <span id="sessionTimerDisplay" class="font-mono">--:--</span>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- =====================================================================
-         شاشة قفل الجلسة (تظهر تلقائياً عند انتهاء الـ 10 دقائق لمنع الطلب من المنزل)
+         شاشة قفل الطاولة (تظهر عند انتهاء الـ 10 دقائق أو فتح الصفحة بدون مسح QR الطاولة)
          ===================================================================== -->
     <section id="expiredLockView" class="hidden w-full max-w-[460px] mx-auto px-4 mt-4 animate-fade-in">
         <div class="luxury-card rounded-3xl p-7 text-center">
             <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl">
-                🔒
+                📷
             </div>
-            <h2 class="text-lg font-extrabold text-[#4e2f1d] mb-2">انتهت صلاحية جلسة الطاولة</h2>
-            <p class="text-xs text-[#7c533b] leading-relaxed mb-5">
-                حرصاً على راحة ضيوفنا داخل <strong>Flower Café</strong>، تنتهي الجلسة تلقائياً بعد 10 دقائق. من فضلك امسح كود الـ QR الموجود على طاولتك مرة أخرى للمتابعة 🌸
+            <h2 id="lockViewTitle" class="text-lg font-extrabold text-[#4e2f1d] mb-2">يرجى مسح كود الـ QR على طاولتك</h2>
+            <p id="lockViewDesc" class="text-xs text-[#7c533b] leading-relaxed mb-4">
+                لبدء الطلب داخل <strong>Flower Café</strong>، وجّه كاميرا هاتفك نحو كود الـ QR المثبّت على طاولتك أو البار.
+                <br /><br />
+                <span class="text-[11px] text-[#9e743b] font-semibold">تنتهي الجلسة تلقائياً بعد 10 دقائق لحماية طلبات الطاولة 🌸</span>
             </p>
-            <button type="button" onclick="simulateTableScan(currentTable)"
-                class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-[#c59b5f] to-[#9e743b] text-white text-sm font-bold shadow-lg active:scale-95 transition-transform">
-                📷 إعادة مسح QR الطاولة الآن
-            </button>
+            <div class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#fff5f8] border border-[#f3dfc1] text-[11px] font-bold text-[#4e2f1d]">
+                <span>🔒 لا يمكن التنقل بين الطاولات بدون مسح QR الطاولة</span>
+            </div>
         </div>
     </section>
 
     <!-- =====================================================================
          1. واجهة الزبون الرئيسية (Customer View)
          ===================================================================== -->
-    <main id="customerView" class="w-full max-w-[460px] mx-auto px-4 space-y-3.5 animate-fade-in">
+    <main id="customerView" class="hidden w-full max-w-[460px] mx-auto px-4 space-y-3.5 animate-fade-in">
 
         <!-- أزرار الإجراءات السريعة (بدون تعقيد أو خطوات مملة) -->
         <div class="grid grid-cols-2 gap-2.5">
@@ -225,7 +202,7 @@
 
         <!-- =================================================================
              كارت الشيك في الواجهة الرئيسية (Check Card)
-             يعرض كل الأوردرات المجمعة على الطاولة + طلب الشيك + حساب أونلاين
+             يعرض كل الأوردرات المجمعة على الطاولة + طلب الشيك + InstaPay / فودافون كاش
              ================================================================= -->
         <section class="luxury-card rounded-3xl p-4">
             <div class="flex items-center justify-between border-b border-[#f3dfc1] pb-2.5 mb-3">
@@ -356,10 +333,10 @@
         <div class="luxury-card rounded-3xl p-4 flex items-center justify-between">
             <div>
                 <div class="flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span id="syncStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
                     <h2 class="text-sm font-extrabold text-[#4e2f1d]">شاشة الاستاف والكاشير الحية</h2>
                 </div>
-                <p id="syncModeIndicator" class="text-[10px] text-[#7c533b] mt-0.5">متصل بالمزامنة الفورية مع تنبيه صوتي 🔔</p>
+                <p id="syncModeIndicator" class="text-[10px] text-[#7c533b] mt-0.5">جاري التحقق من الاتصال السحابي...</p>
             </div>
             <div class="flex items-center gap-1.5">
                 <button type="button" onclick="playDingSound()" title="اختبار صوت التنبيه"
@@ -371,6 +348,11 @@
                     خروج
                 </button>
             </div>
+        </div>
+
+        <!-- تنبيه يظهر فقط إذا لم يتم وضع بيانات Firebase بعد -->
+        <div id="firebaseSetupBanner" class="hidden rounded-2xl p-3.5 bg-amber-50 border border-amber-300 text-amber-900 text-[11px] leading-relaxed">
+            <strong>⚠️ تنبيه المزامنة بين الأجهزة:</strong> أنت تعمل حالياً على التخزين المحلي لهذا الجهاز فقط لأن <code>FIREBASE_CONFIG</code> يحتوي على بيانات تجريبية. للمزامنة اللحظية بين الموبايل واللاب توب، ضع بيانات مشروعك من <strong>Firebase Console</strong> داخل <code>FIREBASE_CONFIG</code> في الكود.
         </div>
 
         <!-- قسم التنبيهات الواردة (أوردرات جديدة، نداء ويتر، طلب شيك، دفع أونلاين) -->
@@ -390,11 +372,11 @@
         <!-- قسم الطاولات المفتوحة والشيكات الجارية -->
         <div class="luxury-card rounded-3xl p-4">
             <div class="flex items-center justify-between mb-3">
-                <h3 class="text-xs font-extrabold text-[#4e2f1d]">🧾 الطاولات المفتوحة والشيكات</h3>
-                <span id="openTablesCount" class="text-[10px] font-bold text-[#9e743b]">0 طاولة مفتوحة</span>
+                <h3 class="text-xs font-extrabold text-[#4e2f1d]">🧾 الطاولات والبار المفتوحة</h3>
+                <span id="openTablesCount" class="text-[10px] font-bold text-[#9e743b]">0 مكان مفتوح</span>
             </div>
             <div id="staffOpenTablesList" class="space-y-3">
-                <div class="py-5 text-center text-xs text-[#7c533b]/80">جميع الطاولات مغلقة ومتاحة حالياً ✨</div>
+                <div class="py-5 text-center text-xs text-[#7c533b]/80">جميع الطاولات والبار مغلقة ومتاحة حالياً ✨</div>
             </div>
         </div>
 
@@ -448,7 +430,7 @@
     </footer>
 
     <!-- =====================================================================
-         المنطق البرمجي الكامل (JavaScript + Firebase/Local Sync + Web Audio)
+         المنطق البرمجي الكامل (JavaScript + Firebase Firestore Cloud Sync)
          ===================================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -456,16 +438,16 @@
         import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         /* =====================================================================
-           1. إعدادات الكافيه القابلة للتعديل بسهولة (CAFE_CONFIG)
+           1. إعدادات الكافيه الأساسية (CAFE_CONFIG)
            ===================================================================== */
         const CAFE_CONFIG = {
             // رقم InstaPay / فودافون كاش الخاص بالكافيه والذي يظهر للزبون:
-            instapayNumber: "01007215194",
+            instapayNumber: "01000000000",
 
             // الرقم السري لفتح شاشة الاستاف والكاشير:
-            staffPin: "0011",
+            staffPin: "1234",
 
-            // مدة صلاحية جلسة المسح بالمللي ثانية (10 دقائق = 10 * 60 * 1000):
+            // مدة صلاحية جلسة مسح QR بالمللي ثانية (10 دقائق = 10 * 60 * 1000):
             sessionDurationMs: 10 * 60 * 1000,
 
             // مدة التهدئة (Cooldown) بين نداءات الويتر المتكررة بالمللي ثانية (دقيقتان = 120,000 مللي ثانية):
@@ -473,7 +455,20 @@
         };
 
         /* =====================================================================
-           2. قائمة المنيو الكاملة المستوحاة من منيو الحائط الفعلي لـ Flower Café
+           2. إعدادات Firebase للمزامنة السحابية الفورية بين الموبايل واللاب توب
+           هام: استبدل القيم التالية ببيانات مشروعك من Firebase Console -> Project Settings
+           ===================================================================== */
+        const FIREBASE_CONFIG = {
+            apiKey: "PUT_YOUR_FIREBASE_API_KEY_HERE",
+            authDomain: "PUT_YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "PUT_YOUR_PROJECT_ID",
+            storageBucket: "PUT_YOUR_PROJECT_ID.firebasestorage.app",
+            messagingSenderId: "PUT_YOUR_MESSAGING_SENDER_ID",
+            appId: "PUT_YOUR_APP_ID"
+        };
+
+        /* =====================================================================
+           3. قائمة المنيو الكاملة المستوحاة من منيو الحائط الفعلي لـ Flower Café
            ===================================================================== */
         const MENU_DATA = [
             {
@@ -540,10 +535,10 @@
         ];
 
         /* =====================================================================
-           3. متغيرات الحالة (State) ومفاتيح الجلسة
+           4. متغيرات الحالة (State) ومفاتيح الجلسة
            ===================================================================== */
         const SESSION_KEYS = {
-            tableNum: "flower_cafe_active_table",
+            tableNum: "flower_cafe_locked_table",
             scanTimestamp: "flower_cafe_scan_ts"
         };
 
@@ -556,16 +551,16 @@
 
         const COOLDOWN_STORAGE_PREFIX = "flower_cafe_waiter_cooldown_ts_table_";
 
-        let currentTable = "3";
+        let currentTable = null; // مقفل على الطاولة التي تم مسح الـ QR الخاص بها فقط
         let activeCategoryId = MENU_DATA[0].id;
         let cart = {}; // { itemId: quantity }
         let sessionInterval = null;
         let isStaffMode = false;
 
         // بيانات حية متزامنة
-        let liveTablesMap = {}; // { "3": { table: "3", items: [...], orders: [...], status: "open" } }
-        let liveAlertsList = []; // [ { id, table, type, title, details, timestamp, resolved } ]
-        let todayConfirmedOrders = []; // [ { id, table, total, itemsSummary, paymentMethod, confirmedAt, confirmedTimeStr } ]
+        let liveTablesMap = {};
+        let liveAlertsList = [];
+        let todayConfirmedOrders = [];
         let knownAlertIds = new Set();
         let initialAlertsLoaded = false;
         let clearDailyConfirmPending = false;
@@ -574,23 +569,23 @@
         let auth = null;
         let currentUser = null;
         let useFirestore = false;
-        const appId = typeof __app_id !== "undefined" ? __app_id : "flower-cafe-default";
+        const appId = typeof __app_id !== "undefined" ? __app_id : "flower-cafe-live";
         const broadcastChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("flower_cafe_sync") : null;
 
         /* =====================================================================
-           4. تهيئة التطبيق عند التحميل
+           5. تهيئة التطبيق عند التحميل
            ===================================================================== */
         window.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("instapayNumberDisplay").textContent = CAFE_CONFIG.instapayNumber;
 
-            // 1) معالجة رابط QR الطاولة وحماية الجلسة (10 دقائق)
-            initTableSessionFromUrl();
+            // 1) قفل الطاولة على كود الـ QR الممسوح فقط وحماية الجلسة (10 دقائق)
+            initLockedTableSessionFromUrl();
 
             // 2) تجهيز المنيو والأقسام
             renderCategoryTabs();
             renderMenuItems();
 
-            // 3) تهيئة المزامنة الحية (Firebase Firestore أو التخزين المحلي المتزامن)
+            // 3) تهيئة المزامنة السحابية اللحظية (Firebase Firestore)
             await initRealtimeSync();
 
             // 4) بدء عداد صلاحية الجلسة (10 دقائق)
@@ -598,7 +593,7 @@
         });
 
         /* =====================================================================
-           5. أمان الجلسة (10 دقائق) وإخفاء بارامتر ?table= من الرابط
+           6. قفل الطاولة ومنع الانتقال لطاولة أخرى بدون مسح QR الطاولة
            ===================================================================== */
         function isValidLocationId(locId) {
             const normalized = String(locId || "").trim().toLowerCase();
@@ -606,78 +601,79 @@
         }
 
         function formatLocationLabel(locId) {
+            if (!locId) return "غير محددة";
             return String(locId).toLowerCase() === "bar" ? "البار" : `طاولة ${locId}`;
         }
 
-        function initTableSessionFromUrl() {
+        function initLockedTableSessionFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const tableFromUrl = urlParams.get("table");
 
             if (tableFromUrl && isValidLocationId(tableFromUrl)) {
-                // مسح جديد عبر QR: حفظ رقم الطاولة أو البار ووقت المسح ومسح البارامتر من شريط العنوان
+                // مسح جديد عبر QR: حفظ رقم الطاولة أو البار ووقت المسح ومسح البارامتر من الرابط
                 currentTable = String(tableFromUrl).toLowerCase();
                 sessionStorage.setItem(SESSION_KEYS.tableNum, currentTable);
                 sessionStorage.setItem(SESSION_KEYS.scanTimestamp, String(Date.now()));
 
-                // إزالة ?table= من الرابط لمنع نسخه أو إرساله للمنزل
+                // إزالة ?table= من شريط العنوان فوراً حتى لا يُنسخ أو يُعدّل يدوياً
                 const cleanUrl = window.location.pathname + window.location.hash;
                 window.history.replaceState({}, document.title, cleanUrl);
             } else {
-                // استرجاع الجلسة الحالية إن وجدت، أو تهيئة طاولة افتراضية للمعاينة
+                // استرجاع الطاولة المقفلة في نفس الجلسة إن لم تمر الـ 10 دقائق
                 const savedTable = sessionStorage.getItem(SESSION_KEYS.tableNum);
-                const savedTs = sessionStorage.getItem(SESSION_KEYS.scanTimestamp);
+                const savedTs = Number(sessionStorage.getItem(SESSION_KEYS.scanTimestamp) || "0");
 
-                if (savedTable && isValidLocationId(savedTable) && savedTs) {
+                if (savedTable && isValidLocationId(savedTable) && (Date.now() - savedTs < CAFE_CONFIG.sessionDurationMs)) {
                     currentTable = String(savedTable).toLowerCase();
                 } else {
-                    currentTable = "3";
-                    sessionStorage.setItem(SESSION_KEYS.tableNum, currentTable);
-                    sessionStorage.setItem(SESSION_KEYS.scanTimestamp, String(Date.now()));
+                    // لا توجد جلسة QR صالحة: قفل واجهة الطلب حتى يمسح الزبون QR طاولته
+                    currentTable = null;
+                    sessionStorage.removeItem(SESSION_KEYS.tableNum);
+                    sessionStorage.removeItem(SESSION_KEYS.scanTimestamp);
                 }
             }
 
             updateTableHeaderUI();
+            applySessionVisibility();
         }
-
-        window.simulateTableScan = function (tableNum) {
-            const normalized = String(tableNum).toLowerCase();
-            currentTable = isValidLocationId(normalized) ? normalized : "3";
-            sessionStorage.setItem(SESSION_KEYS.tableNum, currentTable);
-            sessionStorage.setItem(SESSION_KEYS.scanTimestamp, String(Date.now()));
-            cart = {};
-            updateCartSummaryUI();
-            updateTableHeaderUI();
-
-            // إخفاء شاشة القفل وإظهار واجهة الزبون
-            document.getElementById("expiredLockView").classList.add("hidden");
-            if (!isStaffMode) {
-                document.getElementById("customerView").classList.remove("hidden");
-            }
-
-            renderCustomerCheckCard();
-            showToast(`تم مسح QR ${formatLocationLabel(currentTable)} بنجاح 🌸`);
-        };
 
         function updateTableHeaderUI() {
             const badgeEl = document.getElementById("headerLocationBadge");
-            if (badgeEl) {
-                badgeEl.innerHTML = currentTable === "bar"
-                    ? `<span>🍸</span><span id="headerTableNum">البار</span>`
-                    : `<span>طاولة</span><span id="headerTableNum">${currentTable}</span>`;
-            } else {
-                const numEl = document.getElementById("headerTableNum");
-                if (numEl) numEl.textContent = currentTable === "bar" ? "البار" : currentTable;
+            if (!badgeEl) return;
+
+            if (!currentTable) {
+                badgeEl.innerHTML = `<span>🔒</span><span id="headerTableNum">يرجى مسح QR</span>`;
+                return;
             }
 
-            const simSelect = document.getElementById("qrSimulatorSelect");
-            if (simSelect) simSelect.value = currentTable;
+            badgeEl.innerHTML = currentTable === "bar"
+                ? `<span>🍸</span><span id="headerTableNum">البار</span>`
+                : `<span>طاولة</span><span id="headerTableNum">${currentTable}</span>`;
+        }
+
+        function applySessionVisibility() {
+            if (isStaffMode) return;
+
+            if (currentTable && isSessionValid()) {
+                document.getElementById("expiredLockView").classList.add("hidden");
+                document.getElementById("customerView").classList.remove("hidden");
+            } else {
+                document.getElementById("customerView").classList.add("hidden");
+                document.getElementById("expiredLockView").classList.remove("hidden");
+            }
         }
 
         function startSessionCountdown() {
             if (sessionInterval) clearInterval(sessionInterval);
 
             function tick() {
-                const scanTs = Number(sessionStorage.getItem(SESSION_KEYS.scanTimestamp) || String(Date.now()));
+                if (!currentTable) {
+                    document.getElementById("sessionTimerDisplay").textContent = "--:--";
+                    if (!isStaffMode) applySessionVisibility();
+                    return;
+                }
+
+                const scanTs = Number(sessionStorage.getItem(SESSION_KEYS.scanTimestamp) || "0");
                 const elapsed = Date.now() - scanTs;
                 const remaining = Math.max(0, CAFE_CONFIG.sessionDurationMs - elapsed);
 
@@ -686,11 +682,20 @@
                 document.getElementById("sessionTimerDisplay").textContent =
                     `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 
-                if (remaining === 0 && !isStaffMode) {
-                    // انتهت الـ 10 دقائق: قفل الواجهة وطلب إعادة مسح الـ QR
-                    closeMenuModal();
-                    document.getElementById("customerView").classList.add("hidden");
-                    document.getElementById("expiredLockView").classList.remove("hidden");
+                if (remaining === 0) {
+                    currentTable = null;
+                    sessionStorage.removeItem(SESSION_KEYS.tableNum);
+                    sessionStorage.removeItem(SESSION_KEYS.scanTimestamp);
+                    updateTableHeaderUI();
+
+                    if (!isStaffMode) {
+                        closeMenuModal();
+                        document.getElementById("lockViewTitle").textContent = "انتهت صلاحية جلسة الطاولة";
+                        document.getElementById("lockViewDesc").innerHTML = `
+                            حرصاً على راحة ضيوفنا داخل <strong>Flower Café</strong>، تنتهي الجلسة تلقائياً بعد 10 دقائق. من فضلك امسح كود الـ QR الموجود على طاولتك مرة أخرى للمتابعة 🌸
+                        `;
+                        applySessionVisibility();
+                    }
                 }
             }
 
@@ -699,18 +704,62 @@
         }
 
         function isSessionValid() {
+            if (!currentTable || !isValidLocationId(currentTable)) return false;
             const scanTs = Number(sessionStorage.getItem(SESSION_KEYS.scanTimestamp) || "0");
             return Date.now() - scanTs < CAFE_CONFIG.sessionDurationMs;
         }
 
         /* =====================================================================
-           6. نظام المزامنة الحية (Firebase Firestore مع Fallback محلي تلقائي)
+           7. نظام المزامنة السحابية الحية (Firebase Firestore Cloud Sync)
            ===================================================================== */
+        function hasValidFirebaseConfig(cfg) {
+            return (
+                cfg &&
+                typeof cfg.apiKey === "string" &&
+                cfg.apiKey.length > 10 &&
+                !cfg.apiKey.includes("PUT_YOUR_") &&
+                typeof cfg.projectId === "string" &&
+                cfg.projectId.length > 2 &&
+                !cfg.projectId.includes("PUT_YOUR_")
+            );
+        }
+
+        function updateSyncStatusIndicator(isCloudConnected, messageText) {
+            const dotEl = document.getElementById("syncStatusDot");
+            const textEl = document.getElementById("syncModeIndicator");
+            const bannerEl = document.getElementById("firebaseSetupBanner");
+
+            if (textEl) textEl.textContent = messageText;
+            if (dotEl) {
+                dotEl.className = isCloudConnected
+                    ? "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"
+                    : "w-2.5 h-2.5 rounded-full bg-amber-500";
+            }
+            if (bannerEl) {
+                if (isCloudConnected) {
+                    bannerEl.classList.add("hidden");
+                } else {
+                    bannerEl.classList.remove("hidden");
+                }
+            }
+        }
+
         async function initRealtimeSync() {
-            try {
-                if (typeof __firebase_config !== "undefined" && __firebase_config) {
-                    const firebaseConfig = JSON.parse(__firebase_config);
-                    const app = initializeApp(firebaseConfig);
+            let resolvedConfig = null;
+
+            if (typeof __firebase_config !== "undefined" && __firebase_config) {
+                try {
+                    resolvedConfig = JSON.parse(__firebase_config);
+                } catch {
+                    resolvedConfig = null;
+                }
+            } else if (hasValidFirebaseConfig(FIREBASE_CONFIG)) {
+                resolvedConfig = FIREBASE_CONFIG;
+            }
+
+            if (resolvedConfig && hasValidFirebaseConfig(resolvedConfig)) {
+                try {
+                    const app = initializeApp(resolvedConfig);
                     auth = getAuth(app);
                     db = getFirestore(app);
 
@@ -719,23 +768,28 @@
                     } else {
                         await signInAnonymously(auth);
                     }
+
                     currentUser = auth.currentUser;
                     if (currentUser) {
                         useFirestore = true;
+                        updateSyncStatusIndicator(true, "متصل بالمزامنة السحابية الفورية (Firebase) بين جميع الأجهزة ☁️🔔");
                         subscribeFirestoreData();
                         return;
                     }
+                } catch (err) {
+                    console.error("فشل الاتصال بـ Firebase Firestore:", err);
+                    updateSyncStatusIndicator(false, "تعذر الاتصال السحابي — تأكد من إعدادات وقواعد Firebase");
                 }
-            } catch (err) {
-                console.warn("تشغيل وضع المزامنة المحلية الفورية:", err);
+            } else {
+                updateSyncStatusIndicator(false, "وضع محلي فقط (أضف بيانات FIREBASE_CONFIG للمزامنة بين الموبايل واللاب توب)");
             }
 
-            // الوضع المحلي المتزامن بين التابات (LocalStorage + BroadcastChannel)
+            // وضع التخزين المحلي الاحتياطي فقط في حال عدم إدخال بيانات Firebase
             useFirestore = false;
             loadLocalStateAndRender();
 
             window.addEventListener("storage", (e) => {
-                if (e.key === LOCAL_DB_KEYS.tables || e.key === LOCAL_DB_KEYS.alerts) {
+                if (e.key === LOCAL_DB_KEYS.tables || e.key === LOCAL_DB_KEYS.alerts || e.key === LOCAL_DB_KEYS.dailyOrders) {
                     loadLocalStateAndRender();
                 }
             });
@@ -750,7 +804,7 @@
         function subscribeFirestoreData() {
             if (!useFirestore || !currentUser) return;
 
-            // الاستماع لتحديثات الطاولات المفتوحة
+            // الاستماع اللحظي لتحديثات الطاولات والبار المفتوحة
             const tablesCol = collection(db, "artifacts", appId, "public", "data", "cafe_tables");
             onSnapshot(tablesCol, (snapshot) => {
                 const updatedMap = {};
@@ -762,9 +816,10 @@
                 renderStaffDashboard();
             }, (error) => {
                 console.error("Firestore tables error:", error);
+                updateSyncStatusIndicator(false, "خطأ في صلاحيات القراءة/الكتابة في Firestore Rules");
             });
 
-            // الاستماع للتنبيهات الواردة للاستاف والكاشير
+            // الاستماع اللحظي للتنبيهات الواردة للاستاف والكاشير
             const alertsCol = collection(db, "artifacts", appId, "public", "data", "cafe_alerts");
             onSnapshot(alertsCol, (snapshot) => {
                 const arr = [];
@@ -777,7 +832,7 @@
                 console.error("Firestore alerts error:", error);
             });
 
-            // الاستماع لسجل أوردرات اليوم المؤكدة
+            // الاستماع اللحظي لسجل أوردرات اليوم المؤكدة
             const dailyCol = collection(db, "artifacts", appId, "public", "data", "cafe_daily_orders");
             onSnapshot(dailyCol, (snapshot) => {
                 const dailyArr = [];
@@ -854,6 +909,8 @@
         }
 
         async function pushStaffAlert(alertObj) {
+            if (!currentTable) return;
+
             const alertId = "ALT-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
             const fullAlert = {
                 id: alertId,
@@ -876,14 +933,17 @@
         }
 
         /* =====================================================================
-           7. إجراءات الزبون: نداء الويتر (بتهدئة دقيقتين)، المنيو، السلة، وتجميع الشيك الواحد
+           8. إجراءات الزبون: نداء الويتر (بتهدئة دقيقتين)، المنيو، السلة، وتجميع الشيك الواحد
            ===================================================================== */
         function getWaiterCooldownKey(tableNum) {
             return `${COOLDOWN_STORAGE_PREFIX}${String(tableNum)}`;
         }
 
         window.callWaiter = async function () {
-            if (!isSessionValid()) return;
+            if (!isSessionValid()) {
+                applySessionVisibility();
+                return;
+            }
 
             const cooldownKey = getWaiterCooldownKey(currentTable);
             const lastCallTs = Number(localStorage.getItem(cooldownKey) || sessionStorage.getItem(cooldownKey) || "0");
@@ -913,7 +973,10 @@
         };
 
         window.openMenuModal = function () {
-            if (!isSessionValid()) return;
+            if (!isSessionValid()) {
+                applySessionVisibility();
+                return;
+            }
             renderCategoryTabs();
             renderMenuItems();
             updateCartSummaryUI();
@@ -1026,7 +1089,11 @@
         }
 
         window.submitCartOrder = async function () {
-            if (!isSessionValid()) return;
+            if (!isSessionValid()) {
+                window.closeMenuModal();
+                applySessionVisibility();
+                return;
+            }
 
             const selectedEntries = Object.entries(cart).filter(([, qty]) => qty > 0);
             if (selectedEntries.length === 0) return;
@@ -1111,7 +1178,7 @@
             const badgeEl = document.getElementById("checkStatusBadge");
             const onlineBadgeEl = document.getElementById("onlinePayAmountBadge");
 
-            if (!listEl || !totalEl || !badgeEl) return;
+            if (!listEl || !totalEl || !badgeEl || !currentTable) return;
 
             const tableCheck = liveTablesMap[currentTable];
             const items = tableCheck && tableCheck.status === "open" && Array.isArray(tableCheck.items)
@@ -1151,7 +1218,10 @@
         };
 
         window.requestPaperCheck = async function () {
-            if (!isSessionValid()) return;
+            if (!isSessionValid()) {
+                applySessionVisibility();
+                return;
+            }
             const tableCheck = liveTablesMap[currentTable];
             const total = tableCheck?.total || 0;
             const locLabel = formatLocationLabel(currentTable);
@@ -1184,7 +1254,10 @@
         };
 
         window.confirmInstaPayVodafoneTransfer = async function () {
-            if (!isSessionValid()) return;
+            if (!isSessionValid()) {
+                applySessionVisibility();
+                return;
+            }
             const tableCheck = liveTablesMap[currentTable];
             const total = tableCheck?.total || 0;
             const locLabel = formatLocationLabel(currentTable);
@@ -1235,15 +1308,13 @@
         window.exitStaffView = function () {
             isStaffMode = false;
             document.getElementById("staffView")?.classList.add("hidden");
-            if (isSessionValid()) {
-                document.getElementById("customerView")?.classList.remove("hidden");
-            } else {
-                document.getElementById("expiredLockView")?.classList.remove("hidden");
-            }
+            applySessionVisibility();
         };
 
         function renderStaffDashboard() {
             const alertsContainer = document.getElementById("staffAlertsList");
+            if (!alertsContainer) return;
+
             const activeAlerts = liveAlertsList.filter((a) => !a.resolved);
             document.getElementById("activeAlertsCount").textContent = activeAlerts.length;
 
@@ -1281,8 +1352,12 @@
             }
 
             // عرض الطاولات والبار المفتوحة
-            const openTablesContainer = document.getElementById("openTablesList") || document.getElementById("staffOpenTablesList");
-            const openTables = Object.values(liveTablesMap).filter((t) => t && isValidLocationId(t.table) && t.status === "open" && t.items && t.items.length > 0);
+            const openTablesContainer = document.getElementById("staffOpenTablesList");
+            if (!openTablesContainer) return;
+
+            const openTables = Object.values(liveTablesMap).filter(
+                (t) => t && isValidLocationId(t.table) && t.status === "open" && t.items && t.items.length > 0
+            );
             document.getElementById("openTablesCount").textContent = `${openTables.length} مكان مفتوح`;
 
             if (openTables.length === 0) {
@@ -1337,7 +1412,6 @@
             const settledOrders = Array.isArray(tableCheck?.orders) ? [...tableCheck.orders] : [];
             const locLabel = formatLocationLabel(tableNum);
 
-            // تحديد طريقة الدفع بناءً على آخر إشعار تحويل نشط للطاولة أو البار إن وُجد
             const hasOnlineClaim = liveAlertsList.some(
                 (a) => String(a.table) === String(tableNum) && a.type === "INSTAPAY_VODAFONE" && !a.resolved
             );
@@ -1465,8 +1539,8 @@
                 const gain = ctx.createGain();
 
                 osc.type = "sine";
-                osc.frequency.setValueAtTime(880, ctx.currentTime); // نغمة A5 صافية
-                osc.frequency.exponentialRampToValueAtTime(1318.5, ctx.currentTime + 0.15); // E6
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1318.5, ctx.currentTime + 0.15);
 
                 gain.gain.setValueAtTime(0.25, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
